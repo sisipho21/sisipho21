@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
