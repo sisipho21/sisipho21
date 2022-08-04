@@ -1,14 +1,10 @@
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class MeanFilterSerial {
-    
-    
-    
-     public static void main(String[] args) {
+public class MedianFilterParallel {
+    public static void main(String[] args) {
         BufferedImage img = null, copy=null;
         File f = null, f2=null;
         int w,h;
