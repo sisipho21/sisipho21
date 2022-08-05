@@ -58,7 +58,7 @@ public class MeanFilterSerial {
         
 
         //writing to a file using pixels
-        for (int i=0; i<h; i++)
+        /*for (int i=0; i<h; i++)
         {
             for (int j = 0; j < w; j++) {
 
@@ -73,7 +73,33 @@ public class MeanFilterSerial {
                 copy.setRGB(j, i, p2); //create the value at the pixel coordinate
 
             }
+        }*/
+
+        //Mean Filtering process
+        BufferedImage smallImage = new BufferedImage(window, window, BufferedImage.TYPE_INT_ARGB);
+        for (int i = 0; i < h-window; i++) {
+            for (int j = 0; j < w-window; j++) {
+                int hStart = i; int hEnd = hStart +window-1; int hMiddle = (hStart+hEnd)/2;
+                int wStart = j; int wEnd = wStart +window-1; int wMiddle = (wStart+wEnd)/2;
+                for (int y = 0; y < window; y++) {
+                    
+                    for (int x = 0; x < window; x++) {
+                        int pixel = img.getRGB(wStart, hStart);
+                        smallImage.setRGB(x, y, pixel);
+                        wStart++;
+
+                    }
+                    wStart = j;
+                    hStart++;
+                }
+                hStart = i;
+                int filtered_pixel = mSerial.MeanFilter(window, smallImage);
+                copy.setRGB(wMiddle, hMiddle, filtered_pixel);
+
+            }
         }
+
+        //End Mean Filtering Process
 
         //Outputting the original image file into copy another image
         mSerial.OutputImage(copy, path2);
@@ -96,5 +122,34 @@ public class MeanFilterSerial {
              System.out.println("Could not write to output image");
              System.exit(0);
          }
+    }
+
+    /**
+     * Uses the mean of the alpha, red, green, and blue components surrounding a pixel to filter an image
+     * @param width the window width for filtering
+     * @param image a part of the original image that is filtered
+     * @return (int) the filtered pixel value of the image
+     */
+    private int MeanFilter(int width, BufferedImage image) {
+        int middle = width/2; 
+        int rSum=0, gSum=0, bSum=0, aSum=0;
+        int width_squared = width*width;
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < width; j++) {
+                int p = image.getRGB(j, i);
+                aSum = (p>>24) & 0xff;
+                rSum = (p>>16) & 0xff;
+                gSum = (p>>8) & 0xff;
+                bSum = p & 0xff;
+            }
+        }
+        int aMean = aSum/width_squared;
+        int rMean = rSum/width_squared;
+        int gMean = gSum/width_squared;
+        int bMean = bSum/width_squared;
+        int newPixel = (aMean<<24) | (rMean<<16) | (gMean<<8) | bMean;
+        
+        return newPixel;
     }
 }
