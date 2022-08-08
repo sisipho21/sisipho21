@@ -13,6 +13,7 @@ default: $(CLASS_FILES)
 
 clean:
 	rm $(BINDIR)/*.class
+	rm $(SRCDIR)/*.class
 
 run: $(CLASS_FILES)
 	java -cp bin MeanFilterSerial
