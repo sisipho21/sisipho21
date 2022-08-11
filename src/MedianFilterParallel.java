@@ -7,7 +7,7 @@ public class MedianFilterParallel {
     public static void main(String[] args) {
         MedianFilterParallel medP = new MedianFilterParallel();
         BufferedImage img = null, copy=null;
-        File f = null, f2=null;
+        File f = null;
         int w,h;
 
         String inImage = args[0];  //input image

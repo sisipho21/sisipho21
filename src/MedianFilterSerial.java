@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -51,7 +50,8 @@ public class MedianFilterSerial {
             System.exit(0);
         }
 
-        
+        long startTime = System.currentTimeMillis();  //start time for benchmarking
+        //Meadian Filtering starting
         int[] arrAlpha = new int[window*window];
         int[] arrRed = new int[window*window];
         int[] arrGreen = new int[window*window];
@@ -96,9 +96,13 @@ public class MedianFilterSerial {
 
             }
         }
+        //Meadian Filtering complete
+        long endTime = System.currentTimeMillis(); //end time for benchmarking
 
         //Outputing the image file into another image
         medSerial.OutputImage(copy, path2);
+        System.out.println("Filter window index: "+window+". Image dimensions: "+w+"x"+h+". Time taken: "+ (endTime-startTime)*0.001 +" seconds.");
+
 
     }
 

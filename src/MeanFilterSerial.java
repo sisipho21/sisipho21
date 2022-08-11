@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -58,7 +57,7 @@ public class MeanFilterSerial {
         
 
         //Mean Filtering process
-        
+        long startTime = System.currentTimeMillis(); //start time for benchmarking
         int width_squared = window*window;
         for (int i = 0; i < h-window; i++) {
             for (int j = 0; j < w-window; j++) {
@@ -86,12 +85,12 @@ public class MeanFilterSerial {
                 copy.setRGB(wMiddle, hMiddle, filtered_pixel);
             }
         }
-
         //End Mean Filtering Process
+        long endTime = System.currentTimeMillis();  //end time for benchmarking
 
         //Outputting the original image file into copy another image
         mSerial.OutputImage(copy, path2);
-         
+        System.out.println("Filter window index: "+window+". Image dimensions: "+w+"x"+h+". Time taken: "+ (endTime-startTime)*0.001 +" seconds.");
         
     }
 
