@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.util.Arrays;
 
 public class MedianFilterParallel {
     //global variables for both
@@ -49,7 +50,9 @@ public class MedianFilterParallel {
         RunMedianFilterParallel mfp = medianF.new RunMedianFilterParallel( 0, height);
         ForkJoinPool fjPool = new ForkJoinPool();
 
+        long startTime = System.currentTimeMillis(); //start time for benchmarking
         fjPool.invoke(mfp);
+        long endTime = System.currentTimeMillis(); //end time for benchmarking
 
         try {
             f2 = new File(path2) ;
@@ -59,7 +62,7 @@ public class MedianFilterParallel {
              System.exit(0);
          }
 
-         System.out.println("Parallel Median Filtering complete!");
+         System.out.println("Filter window index: "+window+". Image dimensions: "+width+"x"+height+". Time taken: "+ (endTime-startTime)*0.001 +" seconds.");
 
     }//end MAIN
 
@@ -70,37 +73,48 @@ public class MedianFilterParallel {
         private int windHalf = window/2;
 
         public RunMedianFilterParallel( int start_height, int end_height) {
-            //window = window_width;
             starting_H = start_height;
             ending_H = end_height;
         }
 
         protected void computeMedianFilter(){  
-            //long startTime = System.currentTimeMillis(); //start time for benchmarking
-            int width_squared = window*window;
+            int[] arrAlpha = new int[window*window];
+            int[] arrRed = new int[window*window];
+            int[] arrGreen = new int[window*window];
+            int[] arrBlue = new int[window*window];
+            int middle = (window*window)/2;
             for (int i = starting_H; i < ending_H-window; i++) {
                 for (int j = 0; j < width-window; j++) {
                     int hStart = i; int hEnd = hStart +window-1; int hMiddle = (hStart+hEnd)/2;
                     int wStart = j; int wEnd = wStart +window-1; int wMiddle = (wStart+wEnd)/2;
-                    int rSum=0, gSum=0, bSum=0;
+                    int counter = 0; //helps with creating an array
                     //Going through each window
                     for (int y = 0; y < window; y++) {
                         
                         for (int x = 0; x < window; x++) {
                             int p = img.getRGB(wStart, hStart);
-                            rSum += (p>>16) & 0xff;
-                            gSum += (p>>8) & 0xff;
-                            bSum += p & 0xff;
+                            
+                            arrAlpha[counter] = (p>>24) & 0xff;
+                            arrRed[counter] = (p>>16) & 0xff;
+                            arrGreen[counter] = (p>>8) & 0xff;
+                            arrBlue[counter] = p & 0xff;
+                            counter++;
+                            
                             wStart++;
                         }
                         wStart = j;
                         hStart++;
                     }
                     hStart = i;
-                    int rMean = rSum/width_squared;
-                    int gMean = gSum/width_squared;
-                    int bMean = bSum/width_squared;
-                    int filtered_pixel =  (rMean<<16) | (gMean<<8) | bMean;
+                    Arrays.sort(arrAlpha);
+                    int aMid = arrAlpha[middle];
+                    Arrays.sort(arrRed);
+                    int rMid = arrRed[middle];
+                    Arrays.sort(arrGreen);
+                    int gMid = arrGreen[middle];
+                    Arrays.sort(arrBlue);
+                    int bMid = arrBlue[middle];
+                    int filtered_pixel =  (aMid<<24) | (rMid<<16) | (gMid<<8) | bMid;
                     copy.setRGB(wMiddle, hMiddle, filtered_pixel);
                 }
             }

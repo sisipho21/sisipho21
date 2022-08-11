@@ -49,7 +49,9 @@ import javax.imageio.ImageIO;
         RunMeanFilterParallel mfp = meanF.new RunMeanFilterParallel( 0, height);
         ForkJoinPool fjPool = new ForkJoinPool();
 
+        long startTime = System.currentTimeMillis(); //start time for benchmarking
         fjPool.invoke(mfp);
+        long endTime = System.currentTimeMillis(); //end time for benchmarking
 
         try {
             f2 = new File(path2) ;
@@ -59,7 +61,8 @@ import javax.imageio.ImageIO;
              System.exit(0);
          }
 
-         System.out.println("Parallel Mean Filtering complete!");
+         System.out.println("Filter window index: "+window+". Image dimensions: "+width+"x"+height+". Time taken: "+ (endTime-startTime)*0.001 +" seconds.");
+
 
     }
 
